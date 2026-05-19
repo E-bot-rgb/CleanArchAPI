@@ -1,1 +1,6 @@
-<Solution />
+<Solution>
+  <Project Path="CleanArchAPI.API/CleanArchAPI.API.csproj" Id="e751e9bf-0bd7-4dfb-bf38-f30b69f41561" />
+  <Project Path="CleanArchAPI.Application/CleanArchAPI.Application.csproj" />
+  <Project Path="CleanArchAPI.Domain/CleanArchAPI.Domain.csproj" />
+  <Project Path="CleanArchAPI.Infrastructure/CleanArchAPI.Infrastructure.csproj" />
+</Solution>
