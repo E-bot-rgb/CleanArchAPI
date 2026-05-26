@@ -1,6 +1,7 @@
 ﻿using CleanArchAPI.Application.Categories.Commands.CreateCategory;
 using CleanArchAPI.Application.Categories.Commands.DeleteCategory;
 using CleanArchAPI.Application.Categories.Queries.GetAllCategories;
+using CleanArchAPI.Application.Categories.Queries.GetCategoryById;
 using CleanArchAPI.Application.Common.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,13 +22,22 @@ public class CategoriesController : ControllerBase
     public async Task<IActionResult> GetAll()
         => Ok(await _mediator.Send(new GetAllCategoriesQuery()));
 
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(CategoryDto), 200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var result = await _mediator.Send(new GetCategoryByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
+    }
+
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(CategoryDto), 201)]
     public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
     {
         var result = await _mediator.Send(new CreateCategoryCommand(dto.Name, dto.Description));
-        return CreatedAtAction(nameof(GetAll), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     [HttpDelete("{id:int}")]
