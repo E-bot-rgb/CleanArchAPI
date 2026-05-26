@@ -1,5 +1,6 @@
 ﻿using CleanArchAPI.Application.Categories.Commands.CreateCategory;
 using CleanArchAPI.Application.Categories.Commands.DeleteCategory;
+using CleanArchAPI.Application.Categories.Commands.UpdateCategory;
 using CleanArchAPI.Application.Categories.Queries.GetAllCategories;
 using CleanArchAPI.Application.Categories.Queries.GetCategoryById;
 using CleanArchAPI.Application.Common.DTOs;
@@ -38,6 +39,16 @@ public class CategoriesController : ControllerBase
     {
         var result = await _mediator.Send(new CreateCategoryCommand(dto.Name, dto.Description));
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+    }
+
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(typeof(CategoryDto), 200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto dto)
+    {
+        var result = await _mediator.Send(new UpdateCategoryCommand(id, dto.Name, dto.Description));
+        return result is null ? NotFound() : Ok(result);
     }
 
     [HttpDelete("{id:int}")]
