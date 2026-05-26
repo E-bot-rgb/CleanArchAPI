@@ -23,6 +23,13 @@ public class CategoryRepository : ICategoryRepository
         return category;
     }
 
+    public async Task<Category> UpdateAsync(Category category)
+    {
+        _ctx.Categories.Update(category);
+        await _ctx.SaveChangesAsync();
+        return (await GetByIdAsync(category.Id))!;
+    }
+
     public async Task DeleteAsync(int id)
     {
         var c = await _ctx.Categories.FindAsync(id);
