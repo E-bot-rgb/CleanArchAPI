@@ -3,6 +3,7 @@ using CleanArchAPI.Application.Categories.Commands.DeleteCategory;
 using CleanArchAPI.Application.Categories.Commands.UpdateCategory;
 using CleanArchAPI.Application.Categories.Queries.GetAllCategories;
 using CleanArchAPI.Application.Categories.Queries.GetCategoryById;
+using CleanArchAPI.Application.Categories.Queries.GetProductsByCategory;
 using CleanArchAPI.Application.Common.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,16 @@ public class CategoriesController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _mediator.Send(new GetCategoryByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    /// <summary>Hämta alla produkter för en specifik kategori.</summary>
+    [HttpGet("{id:int}/products")]
+    [ProducesResponseType(typeof(IEnumerable<ProductDto>), 200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetProducts(int id)
+    {
+        var result = await _mediator.Send(new GetProductsByCategoryQuery(id));
         return result is null ? NotFound() : Ok(result);
     }
 
