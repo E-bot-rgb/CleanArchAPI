@@ -18,10 +18,23 @@ public class ProductsController : ControllerBase
     private readonly IMediator _mediator;
     public ProductsController(IMediator mediator) => _mediator = mediator;
 
+    /// <summary>
+    /// Hämta produkter med valfria filter och paginering.
+    /// </summary>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ProductDto>), 200)]
-    public async Task<IActionResult> GetAll()
-        => Ok(await _mediator.Send(new GetAllProductsQuery()));
+    [ProducesResponseType(typeof(PagedResultDto<ProductDto>), 200)]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] string? name,
+        [FromQuery] int? categoryId,
+        [FromQuery] decimal? minPrice,
+        [FromQuery] decimal? maxPrice,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        var result = await _mediator.Send(new GetAllProductsQuery(
+            name, categoryId, minPrice, maxPrice, page, pageSize));
+        return Ok(result);
+    }
 
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ProductDto), 200)]
